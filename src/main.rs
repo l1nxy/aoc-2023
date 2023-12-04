@@ -1,5 +1,6 @@
-pub mod day1;
-pub mod utils;
+mod day1;
+mod day2;
+mod utils;
 fn main() {
     day1::day1();
 }
