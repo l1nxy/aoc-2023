@@ -25,14 +25,41 @@ pub fn day2_1() {
     println!("sum is {}", solve(lines));
 }
 
+pub fn day2_2() {
+    let lines = include_str!("../input/day2.txt");
+    println!("sum is {}", solve2(lines));
+}
+
+fn solve2(lines: &str) -> u32 {
+    lines
+        .lines()
+        .into_iter()
+        .map(|s| {
+            let (input, game) = parse_by_nom(s).unwrap();
+            let mut record: HashMap<String, u32> = HashMap::new();
+
+            for (count, color) in game.ball_list.iter().flatten() {
+                record
+                    .entry(color.to_string())
+                    .and_modify(|e| {
+                        if *e < *count {
+                            *e = *count
+                        }
+                    })
+                    .or_insert(*count);
+            }
+
+            record.iter().fold(1, |acc, v| acc * v.1)
+        })
+        .sum()
+}
+
 fn solve(lines: &str) -> u32 {
     lines
         .lines()
         .into_iter()
         .filter_map(|s| {
-            let (input, game) = parse_by_nom(s).unwrap();
-            eprintln!("{input}");
-
+            let (_, game) = parse_by_nom(s).unwrap();
             if game
                 .ball_list
                 .iter()
@@ -47,6 +74,7 @@ fn solve(lines: &str) -> u32 {
         .sum()
 }
 
+#[derive(Debug)]
 struct Game {
     id: u32,
     ball_list: Vec<Vec<(u32, String)>>,
@@ -70,8 +98,6 @@ fn parse_by_nom(input: &str) -> IResult<&str, Game> {
     let (input, (_, _, id, _, ball_list)) =
         (tag("Game"), tag(" "), game_id, tag(":"), split_list2).parse(input)?;
 
-    println!("game id is:{}, ball_list : {:?}", id, ball_list);
-
     Ok((input, Game { id, ball_list }))
 }
 
@@ -91,5 +117,8 @@ mod tests {
 
         let sum = solve(input.join("\n").as_str());
         assert_eq!(sum, 8);
+
+        let sum2 = solve2(input.join("\n").as_str());
+        assert_eq!(sum2, 2286);
     }
 }
