@@ -1,9 +1,7 @@
-#![allow(dead_code)]
-
 use crate::utils;
 pub fn day1() {
     let contents = utils::read_lines("./input/day1_2.txt");
-    //println!("day1 result is:{}", part1(contents));
+    println!("day1 result is:{}", part1(contents.clone()));
     println!("day1_2 result is:{}", part2(contents));
 }
 
@@ -34,7 +32,7 @@ fn part2(lines: Vec<String>) -> u64 {
                 .map(|(i, s)| line.match_indices(s).map(move |index| (index, i / 2)))
                 .flatten()
                 .collect::<Vec<_>>();
-            println!("numbers:{:?}", numbers);
+
             numbers.sort_by(|a, b| a.0.cmp(&b.0));
             numbers
                 .first()
