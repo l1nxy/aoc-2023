@@ -35,7 +35,7 @@ fn solve2(lines: &str) -> u32 {
         .lines()
         .into_iter()
         .map(|s| {
-            let (input, game) = parse_by_nom(s).unwrap();
+            let (_, game) = parse_by_nom(s).unwrap();
             let mut record: HashMap<String, u32> = HashMap::new();
 
             for (count, color) in game.ball_list.iter().flatten() {
