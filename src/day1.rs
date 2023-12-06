@@ -1,4 +1,4 @@
-use itertools::Itertools;
+#![allow(dead_code)]
 
 use crate::utils;
 pub fn day1() {
