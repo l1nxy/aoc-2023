@@ -1,32 +1,105 @@
 use itertools::Itertools;
+use rayon::prelude::*;
 
 pub fn day5() {
     let lines = include_str!("../input/day5.txt");
     let sum = solve1(lines);
     println!("ths day5 sum is {}", sum);
+    let sum2 = solve2(lines);
+    println!("ths day5 part2 sum is {}", sum2);
 }
 
-struct Map {
-    list: Vec<(u32, u32, u32)>,
-}
-
-fn solve1(lines: &str) -> u32 {
-    let mut lines_iter = lines.lines();
-    let seed = lines_iter.next().unwrap();
-    let seed_list = seed
+fn solve2(lines: &str) -> u64 {
+    //splist by empty line
+    let line_vec = lines.split("\n\n").collect_vec();
+    let seed_list = line_vec
+        .first()
+        .unwrap()
         .splitn(2, ':')
         .last()
         .unwrap()
         .trim()
         .split(' ')
-        .map(|s| s.parse::<u32>().unwrap())
+        .map(|s| s.parse::<u64>().unwrap())
         .collect_vec();
 
-    //splist by empty line
-    let l = lines.split("\n\n").collect_vec();
-    println!("l {:?}", l);
+    let map_list = line_vec
+        .iter()
+        .skip(1)
+        .map(|s| {
+            s.split('\n')
+                .skip(1)
+                .map(|ss| {
+                    ss.split(' ')
+                        .map(|n| n.parse::<u64>().unwrap())
+                        .collect_vec()
+                })
+                .collect_vec()
+        })
+        .collect_vec();
 
-    todo!();
+    seed_list
+        .par_iter()
+        .zip(seed_list.par_iter().skip(1))
+        .map(|(&v1, &v2)| (v1..(v1 + v2)).collect_vec())
+        .flatten()
+        .map(|n| {
+            (
+                n,
+                map_list.iter().fold(n, |acc, x| {
+                    x.iter()
+                        .find(|i| acc >= i[1] && acc <= i[1] + i[2])
+                        .map(|xx| xx[0] + (acc - xx[1]))
+                        .unwrap_or(acc)
+                }),
+            )
+        })
+        .min_by(|x, y| x.1.cmp(&y.1))
+        .unwrap()
+        .0
+}
+
+fn solve1(lines: &str) -> u64 {
+    //splist by empty line
+    let line_vec = lines.split("\n\n").collect_vec();
+    let seed_list = line_vec
+        .first()
+        .unwrap()
+        .splitn(2, ':')
+        .last()
+        .unwrap()
+        .trim()
+        .split(' ')
+        .map(|s| s.parse::<u64>().unwrap())
+        .collect_vec();
+
+    let map_list = line_vec
+        .iter()
+        .skip(1)
+        .map(|s| {
+            s.split('\n')
+                .skip(1)
+                .map(|ss| {
+                    ss.split(' ')
+                        .map(|n| n.parse::<u64>().unwrap())
+                        .collect_vec()
+                })
+                .collect_vec()
+        })
+        .collect_vec();
+
+    seed_list
+        .iter()
+        .map(|n| {
+            map_list.iter().fold(*n, |acc, x| {
+                x.iter()
+                    .find(|i| acc >= i[1] && acc <= i[1] + i[2])
+                    .map(|xx| xx[0] + (acc - xx[1]))
+                    .unwrap_or(acc)
+            })
+        })
+        .min()
+        .unwrap()
 }
 
 #[cfg(test)]
@@ -69,5 +142,7 @@ humidity-to-location map:
 60 56 37
 56 93 4";
         assert_eq!(solve1(input), 35);
+
+        assert_eq!(solve2(input), 82);
     }
 }
