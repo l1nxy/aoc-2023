@@ -39,20 +39,19 @@ fn solve2(lines: &str) -> u64 {
         .collect_vec();
 
     seed_list
-        .par_iter()
-        .zip(seed_list.par_iter().skip(1))
-        .map(|(&v1, &v2)| (v1..(v1 + v2)).collect_vec())
-        .flatten()
-        .map(|n| {
-            (
-                n,
-                map_list.iter().fold(n, |acc, x| {
-                    x.iter()
-                        .find(|i| acc >= i[1] && acc <= i[1] + i[2])
-                        .map(|xx| xx[0] + (acc - xx[1]))
-                        .unwrap_or(acc)
-                }),
-            )
+        .par_chunks(2)
+        .filter_map(|v| {
+            (v[0]..(v[0] + v[1]))
+                .map(|n| {
+                    let ret = map_list.iter().fold(n, |acc, x| {
+                        x.par_iter()
+                            .find_any(|i| acc >= i[1] && acc <= i[1] + i[2])
+                            .map(|xx| xx[0] + (acc - xx[1]))
+                            .unwrap_or(acc)
+                    });
+                    (n, ret)
+                })
+                .min_by(|x, y| x.1.cmp(&y.1))
         })
         .min_by(|x, y| x.1.cmp(&y.1))
         .unwrap()
