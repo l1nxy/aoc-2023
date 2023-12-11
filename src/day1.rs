@@ -1,8 +1,5 @@
-use crate::utils;
 pub fn day1() {
-    let contents = utils::read_lines("./input/day1_2.txt");
-    println!("day1 result is:{}", part1(contents.clone()));
-    println!("day1_2 result is:{}", part2(contents));
+    let contents = include_str!("../input/day1_2.txt");
 }
 
 fn part1(lines: Vec<String>) -> i32 {

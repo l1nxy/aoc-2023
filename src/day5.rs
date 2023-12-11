@@ -5,8 +5,8 @@ pub fn day5() {
     let lines = include_str!("../input/day5.txt");
     let sum = solve1(lines);
     println!("ths day5 sum is {}", sum);
-    let sum2 = solve2(lines);
-    println!("ths day5 part2 sum is {}", sum2);
+    //let sum2 = solve2(lines);
+    //println!("ths day5 part2 sum is {}", sum2);
 }
 
 fn solve2(lines: &str) -> u64 {
