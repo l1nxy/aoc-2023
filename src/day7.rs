@@ -143,7 +143,7 @@ fn get_card_type_part2(card: &str) -> u8 {
 }
 
 fn solve1(lines: &str) -> u32 {
-    let v = lines
+    lines
         .lines()
         .filter_map(|s| {
             s.split_once(' ')
@@ -169,15 +169,12 @@ fn solve1(lines: &str) -> u32 {
                 type1.cmp(&type2)
             }
         })
-        .collect_vec();
-
-    v.into_iter()
         .enumerate()
         .fold(0, |sum, (i, (_, v))| sum + v * (i + 1) as u32)
 }
 
 fn solve2(lines: &str) -> u32 {
-    let v = lines
+    lines
         .lines()
         .filter_map(|s| {
             s.split_once(' ')
@@ -185,9 +182,7 @@ fn solve2(lines: &str) -> u32 {
         })
         .sorted_by(|(card1, _), (card2, _)| {
             let type1 = get_card_type_part2(card1);
-            println!("card1 {card1} type2 :{type1}");
             let type2 = get_card_type_part2(card2);
-            println!("card2 {card2} type2 :{type2}");
             if type1 == type2 {
                 let pairs = card1.chars().zip(card2.chars()).collect_vec();
                 for (a, b) in pairs {
@@ -205,10 +200,6 @@ fn solve2(lines: &str) -> u32 {
                 type1.cmp(&type2)
             }
         })
-        .collect_vec();
-
-    println!("v is {:?}", v);
-    v.into_iter()
         .enumerate()
         .fold(0, |sum, (i, (_, v))| sum + v * (i + 1) as u32)
 }

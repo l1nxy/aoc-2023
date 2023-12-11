@@ -17,11 +17,7 @@ fn solve1(lines: &str) -> u32 {
         .collect_vec();
 
     std::iter::zip(numbers[0].clone(), numbers[1].clone())
-        .map(|(a, sum)| {
-            let count = (0..a).filter(|i| i * (a - i) > sum).count() as u32;
-            println!("count:{count}");
-            count
-        })
+        .map(|(a, sum)| (0..a).filter(|i| i * (a - i) > sum).count() as u32)
         .product()
 }
 
